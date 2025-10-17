@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "node ./src/index.js"
+    "dev": "node ./index.js"
   },
   "author": "",
   "license": "ISC",
   "type": "module",
-  "description": "",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0"
-  }
+  },
+  "devDependencies": {},
+  "description": ""
 }
