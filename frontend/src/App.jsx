@@ -1,17 +1,13 @@
 import { useEffect, useRef, useState } from "react"
 import { BrowserRouter, Routes, Route, useNavigate, Link } from "react-router-dom"
+import { MicrophoneIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 
 const App = () => {
-  // utils
-  const formatDate = (date) => {
-    return new Date(date).toLocaleString()
-  }
+  const formatDate = (date) => new Date(date).toLocaleString()
 
-  // hooks
   const useTasks = () => {
     const [tasks, setTasks] = useState([])
 
-    // 🚀 Traemos las tasks del backend al montar el componente
     useEffect(() => {
       const loadTasks = async () => {
         try {
@@ -24,7 +20,6 @@ const App = () => {
       loadTasks()
     }, [])
 
-    // ➕ Crear una nueva tarea
     const addTask = async (text) => {
       try {
         const newTask = await addTaskApi(text)
@@ -34,7 +29,6 @@ const App = () => {
       }
     }
 
-    // ❌ Eliminar tarea
     const removeTask = async (id) => {
       try {
         await removeTaskApi(id)
@@ -44,7 +38,6 @@ const App = () => {
       }
     }
 
-    // 🔄 Alternar estado de completado
     const toggleTask = async (id) => {
       try {
         const task = tasks.find((t) => t.id === id)
@@ -59,7 +52,7 @@ const App = () => {
     return { tasks, addTask, removeTask, toggleTask }
   }
 
-  // components
+  // COMPONENTES
   const TaskList = ({ tasks, onDelete, onToggle }) => (
     <ul className="mt-4">
       {tasks.map((task) => (
@@ -70,7 +63,9 @@ const App = () => {
 
   const TaskItem = ({ task, onDelete, onToggle }) => (
     <li
-      className={`flex items-center justify-between p-2 rounded-md mb-2 ${task.completed ? "bg-gray-700 line-through text-gray-400" : "bg-gray-800 text-gray-200"
+      className={`flex items-center justify-between p-3 rounded-xl mb-2 shadow-sm border transition-transform duration-300 transform hover:scale-101 ${task.completed
+        ? "bg-[#FF4583]/10 line-through text-gray-500 border-gray-300"
+        : "bg-white text-gray-800 border-gray-200"
         }`}
     >
       <div className="flex items-center gap-2">
@@ -78,21 +73,22 @@ const App = () => {
           type="checkbox"
           checked={task.completed}
           onChange={() => onToggle(task.id)}
-          className="w-4 h-4 accent-blue-500"
+          className="w-4 h-4 accent-[#FF8A59]"
         />
         <span>{task.text}</span>
       </div>
       <div className="flex items-center gap-4 text-sm">
-        <span className="text-gray-400">{formatDate(task.createdAt)}</span>
+        <span className="text-gray-500">{formatDate(task.createdAt)}</span>
         <button
           onClick={() => onDelete(task.id)}
-          className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded"
+          className="px-2 py-1 bg-[#FFC54C] text-white rounded-lg font-medium"
         >
           Eliminar
         </button>
       </div>
     </li>
   )
+
 
   const TaskInput = ({ onAdd }) => {
     const [listening, setListening] = useState(false)
@@ -147,7 +143,7 @@ const App = () => {
       <div className="mt-4">
         <button
           onClick={handleToggle}
-          className={`px-4 py-2 rounded text-white ${listening ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"
+          className={`px-4 py-2 rounded text-white font-medium shadow-md ${listening ? "bg-[#fac042] hover:bg-[#ffb10a]" : "bg-[#fc5b91] hover:bg-[#f8286e]"
             }`}
         >
           {listening ? "Detener" : "Comenzar grabación"}
@@ -163,12 +159,12 @@ const App = () => {
               }}
               rows="3"
               cols="40"
-              className="w-full p-2 rounded bg-gray-800 text-gray-200 border border-gray-600"
+              className="w-full p-2 rounded border border-gray-300 text-gray-800 shadow-sm"
             />
             <br />
             <button
               onClick={handleConfirm}
-              className="mt-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
+              className="mt-2 px-4 py-2 bg-[#FF8A59] hover:bg-[#ff793f] text-white rounded-lg font-medium"
             >
               Confirmar tarea
             </button>
@@ -177,14 +173,24 @@ const App = () => {
       </div>
     )
   }
+
   const Header = () => (
-    <header className="bg-gray-900 text-gray-200 p-4 flex justify-between items-center">
-      <h1 className="text-lg font-bold">TodoApp</h1>
-      <nav className="space-x-4">
-        <Link className="hover:text-blue-400" to="/">
+    <header className="bg-[#FF4583] text-white p-4 flex justify-between items-center shadow-md">
+      <div className="flex items-center gap-2">
+        <MicrophoneIcon className="w-6 h-6" />
+        <h1 className="text-xl font-semibold tracking-wider">SayDo</h1>
+      </div>
+      <nav className="flex gap-4 font-semibold">
+        <Link
+          to="/"
+          className="transition-transform duration-200 transform hover:scale-105"
+        >
           Login
         </Link>
-        <Link className="hover:text-blue-400" to="/mis-tareas">
+        <Link
+          to="/mis-tareas"
+          className="transition-transform duration-200 transform hover:scale-105"
+        >
           Mis Tareas
         </Link>
       </nav>
@@ -192,33 +198,44 @@ const App = () => {
   )
 
   const Footer = () => (
-    <footer className="bg-gray-900 text-gray-400 text-center p-4 mt-8">
-      Demo App ©
+    <footer className="bg-white text-gray-500 text-center p-4 mt-8 text-sm border-t border-gray-200">
+      Demo App © {new Date().getFullYear()}
     </footer>
   )
 
-  // layout
   const Layout = ({ children }) => (
-    <div className="min-h-screen flex flex-col bg-gray-950 text-gray-200">
+    <div className="min-h-screen flex flex-col bg-white text-gray-800">
       <Header />
       <main className="flex-1 p-6">{children}</main>
       <Footer />
     </div>
   )
 
-  // pages
   const NotFound = () => (
     <Layout>
-      <h1 className="text-2xl font-bold text-red-500">404 - Página no encontrada</h1>
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <h1
+          className="text-5xl md:text-5xl font-bold text-center leading-tight"
+          style={{
+            background: "linear-gradient(90deg, #FB0FBA, #FF8A59)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            overflow: "visible",
+          }}
+        >
+          404 - Página no encontrada
+        </h1>
+      </div>
     </Layout>
   )
+
 
   const MisTareas = () => {
     const { tasks, addTask, removeTask, toggleTask } = useTasks()
 
     return (
       <Layout>
-        <h1 className="text-2xl font-bold mb-4">Mis Tareas</h1>
+        <h1 className="text-3xl font-extrabold mb-4 mt-5 uppercase text-[#FF8A59] border-b border-[#ff45836e]">Mis Tareas</h1>
         <TaskInput onAdd={addTask} />
         <TaskList tasks={tasks} onDelete={removeTask} onToggle={toggleTask} />
       </Layout>
@@ -236,7 +253,7 @@ const App = () => {
       if (pin === "1234") {
         setError("")
         setSuccess(true)
-        setTimeout(() => navigate("/mis-tareas"), 1000) // redirige con un pequeño delay
+        setTimeout(() => navigate("/mis-tareas"), 1000)
       } else {
         setSuccess(false)
         setError("Credencial incorrecta. Intenta nuevamente.")
@@ -246,29 +263,35 @@ const App = () => {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[70vh]">
-          <div className="w-full max-w-sm bg-gray-900 p-6 rounded-lg shadow-lg">
-            <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+          <div className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+            <h1 className="text-2xl font-bold mb-4 text-center text-[#FF4583]">
+              Login
+            </h1>
+            <div className="mt-2 mb-4 p-3 bg-gray-100 text-gray-700 text-center rounded-lg text-sm ">
+              Código de acceso: <span className="font-bold">1234</span>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="password"
                 placeholder="Ingresa tu código numérico"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
-                className="w-full p-2 rounded bg-gray-800 text-gray-200 border border-gray-600"
+                className="w-full p-2 rounded border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#933FED]"
               />
               <button
                 type="submit"
-                className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+                className="w-full px-4 py-2 bg-[#FF8A59] hover:bg-[#fd6d2f] text-white rounded-lg font-medium"
               >
                 Entrar
               </button>
             </form>
 
             {error && (
-              <p className="mt-4 text-red-500 font-semibold text-center">{error}</p>
+              <p className="mt-4 text-[#FF4583] font-semibold text-center">{error}</p>
             )}
             {success && (
-              <p className="mt-4 text-green-500 font-semibold text-center">
+              <p className="mt-4 text-[#FF4583] font-semibold text-center">
                 Acceso concedido. Redirigiendo...
               </p>
             )}
@@ -278,7 +301,6 @@ const App = () => {
     )
   }
 
-  // router
   const RouterApp = () => (
     <BrowserRouter>
       <Routes>
@@ -289,17 +311,14 @@ const App = () => {
     </BrowserRouter>
   )
 
-  // services
   const BASE_URL = "http://localhost:3000/tasks"
 
-  // 📥 Obtener todas las tareas
   const fetchTasksApi = async () => {
     const res = await fetch(BASE_URL)
     if (!res.ok) throw new Error("Error al obtener las tareas")
     return await res.json()
   }
 
-  // ➕ Crear nueva tarea
   const addTaskApi = async (text) => {
     const res = await fetch(BASE_URL, {
       method: "POST",
@@ -310,14 +329,12 @@ const App = () => {
     return await res.json()
   }
 
-  // ❌ Eliminar tarea
   const removeTaskApi = async (id) => {
     const res = await fetch(`${BASE_URL}/${id}`, { method: "DELETE" })
     if (!res.ok) throw new Error("Error al eliminar la tarea")
     return true
   }
 
-  // 🔄 Actualizar tarea (toggle o edición)
   const toggleTaskApi = async (id, completed) => {
     const res = await fetch(`${BASE_URL}/${id}`, {
       method: "PUT",

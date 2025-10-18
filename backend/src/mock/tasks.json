@@ -10,5 +10,23 @@
     "text": "Hola grabando tarea",
     "completed": false,
     "createdAt": "2025-10-01T17:59:45.231Z"
+  },
+  {
+    "id": "618bfcc9-9b2c-48b5-85d7-a1b6c0a88a40",
+    "text": "Hola hola",
+    "completed": true,
+    "createdAt": "2025-10-18T02:16:13.934Z"
+  },
+  {
+    "id": "a939fd09-fc27-4ab4-9923-f9f879a4464f",
+    "text": "Hola ir a la ver",
+    "completed": true,
+    "createdAt": "2025-10-18T02:26:56.050Z"
+  },
+  {
+    "id": "ac29121f-bd4e-43fd-bf96-393031df6876",
+    "text": "Ir a la verdu",
+    "completed": false,
+    "createdAt": "2025-10-18T02:35:36.078Z"
   }
 ]
