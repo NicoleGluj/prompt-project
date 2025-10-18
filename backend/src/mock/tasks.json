@@ -1,0 +1,14 @@
+[
+  {
+    "id": "b2d214c9-7185-4f0f-9211-44d7f88fdddc",
+    "text": "Tengo que ir a la verdulería",
+    "completed": false,
+    "createdAt": "2025-09-24T21:42:50.410Z"
+  },
+  {
+    "id": "7078a00b-6e84-402f-807c-0eb872b98e9c",
+    "text": "Hola grabando tarea",
+    "completed": false,
+    "createdAt": "2025-10-01T17:59:45.231Z"
+  }
+]
