@@ -4,10 +4,43 @@ import { randomUUID } from "crypto";
 import cors from "cors";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import morgan from "morgan";
+import fs from "fs";
+import path from "path";
 
 const app = express();
 const PORT = 3000;
 const JWT_SECRET = "supersecreto"; // 👉 cámbialo por una variable de entorno
+
+// --- 🪵 Configuración del logger ---
+const logsDir = path.join(process.cwd(), "logs");
+
+// Crear carpeta logs si no existe
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir);
+}
+
+// Nombre del archivo con la fecha actual
+const logFileName = `access-${new Date().toISOString().split("T")[0]}.log`;
+const logFilePath = path.join(logsDir, logFileName);
+
+// Crear stream de escritura en modo append
+const accessLogStream = fs.createWriteStream(logFilePath, { flags: "a" });
+
+// Morgan -> registra todo en archivo y consola, excepto OPTIONS
+app.use(
+  morgan("common", {
+    skip: (req) => req.method === "OPTIONS",
+    stream: accessLogStream
+  })
+);
+
+// También mostrar en consola
+app.use(
+  morgan("common", {
+    skip: (req) => req.method === "OPTIONS"
+  })
+);
 
 // --- Conexión MongoDB ---
 const MONGO_URI = "mongodb://localhost:27017/tareasdb";
@@ -51,6 +84,36 @@ const authMiddleware = (req, res, next) => {
   });
 };
 
+// --- 🩺 Endpoint de estado del sistema ---
+app.get("/status", (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  /*
+    Estados de readyState:
+    0 = disconnected
+    1 = connected
+    2 = connecting
+    3 = disconnecting
+  */
+
+  if (dbState !== 1) {
+    return res.status(503).json({
+      status: "DOWN",
+      message: "La base de datos no está conectada",
+      dbStatus: dbState,
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  res.status(200).json({
+    status: "OK",
+    message: "Sistema operativo y base de datos funcionando correctamente",
+    dbStatus: dbState,
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // --- Rutas de autenticación ---
 app.post("/auth/register", async (req, res) => {
   try {
@@ -81,11 +144,10 @@ app.post("/auth/login", async (req, res) => {
     if (!isValid) return res.status(400).send("Credenciales inválidas");
 
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user._id, email: user.email, test: 1 },
       JWT_SECRET,
-      { expiresIn: "1h" } // expira en 1 hora
+      { expiresIn: "1h" }
     );
-
     res.json({ token });
   } catch {
     res.status(500).send("Error en el login");
