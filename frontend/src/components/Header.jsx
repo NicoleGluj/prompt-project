@@ -15,6 +15,12 @@ export const Header = () => (
         Login
       </Link>
       <Link
+        to="/register"
+        className="transition-transform duration-200 transform hover:scale-105"
+      >
+        Registro
+      </Link>
+      <Link
         to="/mis-tareas"
         className="transition-transform duration-200 transform hover:scale-105"
       >

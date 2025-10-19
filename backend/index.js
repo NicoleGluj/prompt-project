@@ -1,128 +1,155 @@
-import http from "http";
-import fs from "fs";
+import express from "express";
+import mongoose from "mongoose";
 import { randomUUID } from "crypto";
+import cors from "cors";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
+const app = express();
 const PORT = 3000;
-const FILE = "./src/mock/tasks.json";
+const JWT_SECRET = "supersecreto"; // 👉 cámbialo por una variable de entorno
 
-// Helper: leer tareas
-const readTasks = () => {
-  try {
-    const data = fs.readFileSync(FILE, "utf-8");
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-};
+// --- Conexión MongoDB ---
+const MONGO_URI = "mongodb://localhost:27017/tareasdb";
+mongoose
+  .connect(MONGO_URI)
+  .then(() => console.log("✅ Conectado a MongoDB"))
+  .catch((err) => console.error("❌ Error al conectar a MongoDB:", err));
 
-// Helper: escribir tareas
-const writeTasks = (tasks) => {
-  fs.writeFileSync(FILE, JSON.stringify(tasks, null, 2));
-};
-
-
-// Crear servidor
-const server = http.createServer((req, res) => {
-  // CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    res.writeHead(204);
-    res.end();
-    return;
-  }
-
-  // --- GET /tasks ---
-  if (req.url === "/tasks" && req.method === "GET") {
-    const tasks = readTasks();
-    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-    res.end(JSON.stringify(tasks));
-    return;
-  }
-
-  // --- POST /tasks ---
-  if (req.url === "/tasks" && req.method === "POST") {
-    let body = "";
-    req.on("data", (chunk) => (body += chunk));
-    req.on("end", () => {
-      try {
-        const { text } = JSON.parse(body);
-        const newTask = {
-          id: randomUUID(),
-          text,
-          completed: false,
-          createdAt: new Date(),
-        };
-
-        const tasks = readTasks();
-        tasks.push(newTask);
-        writeTasks(tasks);
-
-        res.writeHead(201, { "Content-Type": "application/json; charset=utf-8" });
-        res.end(JSON.stringify(newTask));
-      } catch {
-        res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
-        res.end("Datos inválidos");
-      }
-    });
-    return;
-  }
-
-  // --- PUT /tasks/:id (toggle o edición) ---
-  if (req.url.startsWith("/tasks/") && req.method === "PUT") {
-    const id = req.url.split("/")[2];
-    let body = "";
-    req.on("data", (chunk) => (body += chunk));
-    req.on("end", () => {
-      try {
-        const updates = JSON.parse(body);
-        let tasks = readTasks();
-        const index = tasks.findIndex((t) => t.id === id);
-
-        if (index === -1) {
-          res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-          res.end("Task no encontrada");
-          return;
-        }
-
-        tasks[index] = { ...tasks[index], ...updates };
-        writeTasks(tasks);
-
-        res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-        res.end(JSON.stringify(tasks[index]));
-      } catch {
-        res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
-        res.end("Datos inválidos");
-      }
-    });
-    return;
-  }
-
-  // --- DELETE /tasks/:id ---
-  if (req.url.startsWith("/tasks/") && req.method === "DELETE") {
-    const id = req.url.split("/")[2];
-    let tasks = readTasks();
-    const newTasks = tasks.filter((t) => t.id !== id);
-
-    if (newTasks.length === tasks.length) {
-      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-      res.end("Task no encontrada");
-      return;
-    }
-
-    writeTasks(newTasks);
-    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-    res.end(JSON.stringify({ message: "Task eliminada" }));
-    return;
-  }
-
-  // --- Default ---
-  res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-  res.end("Ruta no encontrada");
+// --- Schemas & Modelos ---
+const taskSchema = new mongoose.Schema({
+  id: { type: String, default: () => randomUUID() },
+  text: { type: String, required: true },
+  completed: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
 });
 
-server.listen(PORT, () => {
+const Task = mongoose.model("Task", taskSchema);
+
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  passwordHash: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const User = mongoose.model("User", userSchema);
+
+// --- Middleware ---
+app.use(express.json());
+app.use(cors());
+
+// Middleware para validar token
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  if (!authHeader) return res.status(401).send("Token requerido");
+
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).send("Token inválido o expirado");
+    req.user = user; // datos del token
+    next();
+  });
+};
+
+// --- Rutas de autenticación ---
+app.post("/auth/register", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(400).send("Email y password requeridos");
+
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(400).send("Usuario ya registrado");
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const newUser = new User({ email, passwordHash });
+    await newUser.save();
+
+    res.status(201).send("Usuario registrado correctamente");
+  } catch {
+    res.status(500).send("Error en el registro");
+  }
+});
+
+app.post("/auth/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).send("Credenciales inválidas");
+
+    const isValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isValid) return res.status(400).send("Credenciales inválidas");
+
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: "1h" } // expira en 1 hora
+    );
+
+    res.json({ token });
+  } catch {
+    res.status(500).send("Error en el login");
+  }
+});
+
+// --- Rutas de Tareas (protegidas con authMiddleware) ---
+app.get("/tasks", authMiddleware, async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    res.status(200).json(tasks);
+  } catch (err) {
+    res.status(500).send("Error al obtener tareas");
+  }
+});
+
+app.post("/tasks", authMiddleware, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) return res.status(400).send("Datos inválidos");
+
+    const newTask = new Task({ text });
+    await newTask.save();
+
+    res.status(201).json(newTask);
+  } catch {
+    res.status(400).send("Datos inválidos");
+  }
+});
+
+app.put("/tasks/:id", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    const updatedTask = await Task.findOneAndUpdate({ id }, updates, {
+      new: true,
+    });
+
+    if (!updatedTask) return res.status(404).send("Task no encontrada");
+    res.status(200).json(updatedTask);
+  } catch {
+    res.status(400).send("Datos inválidos");
+  }
+});
+
+app.delete("/tasks/:id", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Task.findOneAndDelete({ id });
+
+    if (!deleted) return res.status(404).send("Task no encontrada");
+    res.status(200).json({ message: "Task eliminada" });
+  } catch {
+    res.status(500).send("Error al eliminar la task");
+  }
+});
+
+// --- Default ---
+app.use((req, res) => {
+  res.status(404).send("Ruta no encontrada");
+});
+
+// Iniciar servidor
+app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

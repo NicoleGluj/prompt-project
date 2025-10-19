@@ -1,22 +1,32 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Layout } from "../layout/Layout"
+import { useAuth } from "../context/AuthContext"
 
 export const Login = () => {
   const navigate = useNavigate()
-  const [pin, setPin] = useState("")
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
+  const { login } = useAuth()
 
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+  const [loading, setLoading] = useState(false)
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (pin === "1234") {
-      setError("")
-      setSuccess(true)
-      setTimeout(() => navigate("/mis-tareas"), 1000)
-    } else {
-      setSuccess(false)
-      setError("Credencial incorrecta. Intenta nuevamente.")
+    setError("")
+    setLoading(true)
+
+    try {
+      const data = await loginApi(email, password) // { token }
+      login({ email, token: data.token })          // guardar en contexto
+      navigate("/")
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
   }
   return (
@@ -26,23 +36,29 @@ export const Login = () => {
           <h1 className="text-2xl font-bold mb-4 text-center text-[#FF4583]">
             Login
           </h1>
-          <div className="mt-2 mb-4 p-3 bg-gray-100 text-gray-700 text-center rounded-lg text-sm ">
-            Código de acceso: <span className="font-bold">1234</span>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
-              type="password"
-              placeholder="Ingresa tu código numérico"
-              value={pin}
-              onChange={(e) => setPin(e.target.value)}
+              type="email"
+              placeholder="Correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 rounded border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#933FED]"
+              required
+            />
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-2 rounded border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#933FED]"
+              required
             />
             <button
               type="submit"
+              disabled={loading}
               className="w-full px-4 py-2 bg-[#FF8A59] hover:bg-[#fd6d2f] text-white rounded-lg font-medium"
             >
-              Entrar
+              {loading ? "Ingresando..." : "Entrar"}
             </button>
           </form>
 

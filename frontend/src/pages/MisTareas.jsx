@@ -1,6 +1,6 @@
-import { TaskInput } from "../components/TaskInput"
-import { TaskList } from "../components/TaskList"
 import { useTasks } from "../hooks/useTasks"
+import { TaskList } from "../components/TaskList"
+import { TaskInput } from "../components/TaskInput"
 import { Layout } from "../layout/Layout"
 
 export const MisTareas = () => {
@@ -8,7 +8,7 @@ export const MisTareas = () => {
 
   return (
     <Layout>
-      <h1 className="text-3xl font-extrabold mb-4 mt-5 uppercase text-[#FF8A59] border-b border-[#ff45836e]">Mis Tareas</h1>
+      <h1 className="text-2xl font-bold mb-4">Mis Tareas</h1>
       <TaskInput onAdd={addTask} />
       <TaskList tasks={tasks} onDelete={removeTask} onToggle={toggleTask} />
     </Layout>

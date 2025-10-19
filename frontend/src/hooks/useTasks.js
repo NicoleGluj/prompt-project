@@ -1,9 +1,15 @@
-import { useEffect, useState } from "react"
-import { addTaskApi, fetchTasksApi, removeTaskApi, toggleTaskApi } from "../services/apiTasks"
+import { useState, useEffect } from "react"
+import {
+  fetchTasksApi,
+  addTaskApi,
+  removeTaskApi,
+  toggleTaskApi,
+} from "../services/apiTasks"
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState([])
 
+  // 🚀 Traemos las tasks del backend al montar el componente
   useEffect(() => {
     const loadTasks = async () => {
       try {
@@ -16,6 +22,7 @@ export const useTasks = () => {
     loadTasks()
   }, [])
 
+  // ➕ Crear una nueva tarea
   const addTask = async (text) => {
     try {
       const newTask = await addTaskApi(text)
@@ -25,6 +32,7 @@ export const useTasks = () => {
     }
   }
 
+  // ❌ Eliminar tarea
   const removeTask = async (id) => {
     try {
       await removeTaskApi(id)
@@ -34,6 +42,7 @@ export const useTasks = () => {
     }
   }
 
+  // 🔄 Alternar estado de completado
   const toggleTask = async (id) => {
     try {
       const task = tasks.find((t) => t.id === id)
