@@ -1,5 +1,7 @@
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
+import React from "react"
+
 
 export const Layout = ({ children }) => (
   <div className="min-h-screen flex flex-col bg-white text-gray-800">

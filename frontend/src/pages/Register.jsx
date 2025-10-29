@@ -1,4 +1,4 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Layout } from "../layout/Layout"
 import { useAuth } from "../context/AuthContext"
@@ -84,10 +84,19 @@ export const Register = () => {
           </form>
 
           {error && (
-            <p className="mt-4 text-[#FF4583] font-semibold text-center">{error}</p>
+            <p
+              data-testid="error-message"
+              className="mt-4 text-[#FF4583] font-semibold text-center"
+            >
+              {error}
+            </p>
           )}
+
           {success && (
-            <p className="mt-4 text-[#FF4583] font-semibold text-center">
+            <p
+              data-testid="success-message"
+              className="mt-4 text-[#FF4583] font-semibold text-center"
+            >
               Acceso concedido. Redirigiendo...
             </p>
           )}

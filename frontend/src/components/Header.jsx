@@ -1,5 +1,7 @@
 import { MicrophoneIcon } from "@heroicons/react/16/solid";
 import { Link } from "react-router-dom";
+import React from "react"
+
 
 export const Header = () => (
   <header className="bg-[#FF4583] text-white p-4 flex justify-between items-center shadow-md">
@@ -9,7 +11,7 @@ export const Header = () => (
     </div>
     <nav className="flex gap-4 font-semibold">
       <Link
-        to="/"
+        to="/login"
         className="transition-transform duration-200 transform hover:scale-105"
       >
         Login
@@ -21,7 +23,7 @@ export const Header = () => (
         Registro
       </Link>
       <Link
-        to="/mis-tareas"
+        to="/"
         className="transition-transform duration-200 transform hover:scale-105"
       >
         Mis Tareas

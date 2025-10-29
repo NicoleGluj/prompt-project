@@ -5,6 +5,8 @@ import {
   removeTaskApi,
   toggleTaskApi,
 } from "../services/apiTasks"
+import React from "react";
+
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState([])
@@ -36,7 +38,7 @@ export const useTasks = () => {
   const removeTask = async (id) => {
     try {
       await removeTaskApi(id)
-      setTasks(tasks.filter((task) => task.id !== id))
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== id))
     } catch (error) {
       console.error("Error en removeTask:", error)
     }
@@ -45,14 +47,15 @@ export const useTasks = () => {
   // 🔄 Alternar estado de completado
   const toggleTask = async (id) => {
     try {
-      const task = tasks.find((t) => t.id === id)
+      const task = tasks.find(t => t.id === id)
       if (!task) return
       const updatedTask = await toggleTaskApi(id, !task.completed)
-      setTasks(tasks.map((t) => (t.id === id ? updatedTask : t)))
+      setTasks(prevTasks => prevTasks.map(t => t.id === id ? updatedTask : t))
     } catch (error) {
       console.error("Error en toggleTask:", error)
     }
   }
+
 
   return { tasks, addTask, removeTask, toggleTask }
 }

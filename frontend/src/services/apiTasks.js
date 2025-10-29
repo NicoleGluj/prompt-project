@@ -1,7 +1,10 @@
+import React from "react"
+
+
 const BASE_URL = "http://localhost:3000/tasks"
 
 // 👉 Helper para obtener headers con token de autenticación
-const getAuthHeaders = () => {
+export const getAuthHeaders = () => {
   const token = localStorage.getItem("authToken")
   if (!token) throw new Error("No hay token de autenticación")
   return {
