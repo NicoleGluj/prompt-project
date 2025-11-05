@@ -4,20 +4,22 @@ import cors from "cors";
 import morgan from "morgan";
 import fs from "fs";
 import path from "path";
-import dotenv from "dotenv"
-import authRouter from "./src/routes/authRoutes.js";
-import authMiddleware from "./src/middlewares/authMiddleware.js";
+import dotenv from "dotenv";
 import taskRouter from "./src/routes/tasksRoutes.js";
+import authRouter from "./src/routes/authRoutes.js";
 import connectDb from "./src/config/mongodb.js";
+import authMiddleware from "./src/middlewares/authMiddleware.js"
 
 dotenv.config()
-const { PORT, MONGO_URI, NODE_ENV } = process.env
 
-const app = express()
-app.use(express.json());
-app.use(cors());
+const app = express();
 
-// CONFIGURACION LOGGER
+const PORT = process.env.PORT;
+const port = parseInt((process.env.PORT || 3000).toString().trim().replace(/[^0-9]/g, '')) || 3000;
+
+const MONGO_URI = process.env.MONGO_URI;
+const NODE_ENV = process.env.NODE_ENV;
+
 const logsDir = path.join(process.cwd(), "logs");
 
 if (!fs.existsSync(logsDir)) {
@@ -28,7 +30,6 @@ const logFileName = `access-${new Date().toISOString().split("T")[0]}.log`;
 const logFilePath = path.join(logsDir, logFileName);
 const accessLogStream = fs.createWriteStream(logFilePath, { flags: "a" });
 
-// MORGAN
 app.use(
   morgan("common", {
     skip: (req) => req.method === "OPTIONS",
@@ -42,7 +43,9 @@ app.use(
   })
 );
 
-// ESTADO DEL SISTEMA
+app.use(express.json());
+app.use(cors());
+
 app.get("/status", (req, res) => {
   const dbState = mongoose.connection.readyState;
 
@@ -65,21 +68,22 @@ app.get("/status", (req, res) => {
   });
 });
 
-// RUTAS AUTENTICACION
 app.use("/auth", authRouter)
 app.use("/tasks", authMiddleware, taskRouter)
 
-// RUTA NO ENCONTRADA
+app.get("/test", (req, res) => {
+  console.log('aca')
+});
+
 app.use((req, res) => {
   res.status(404).send("Ruta no encontrada");
 });
 
-// TEST
 if (NODE_ENV !== "test") {
   // Iniciar servidor
-  app.listen(PORT, () => {
+  app.listen(port, () => {
     connectDb(MONGO_URI)
-    console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`✅ Servidor corriendo en http://localhost:${port}`);
   });
 }
 

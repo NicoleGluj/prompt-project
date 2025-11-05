@@ -15,6 +15,7 @@ const addTask = async (req, res) => {
     if (!text) return res.status(400).send("Datos inválidos");
 
     const newTask = new Task({ text });
+    console.log(newTask)
     await newTask.save();
 
     res.status(201).json(newTask);
@@ -28,7 +29,7 @@ const updateTask = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    const updatedTask = await Task.findOneAndUpdate({ id }, updates, {
+    const updatedTask = await Task.findByIdAndUpdate(id, updates, {
       new: true,
     });
 
@@ -42,7 +43,7 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const deleted = await Task.findOneAndDelete({ id });
+    const deleted = await Task.findByIdAndDelete(id);
 
     if (!deleted) return res.status(404).send("Task no encontrada");
     res.status(200).json({ message: "Task eliminada" });
