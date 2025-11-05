@@ -1,7 +1,5 @@
 import { MicrophoneIcon } from "@heroicons/react/16/solid";
 import { Link } from "react-router-dom";
-import React from "react"
-
 
 export const Header = () => (
   <header className="bg-[#FF4583] text-white p-4 flex justify-between items-center shadow-md">

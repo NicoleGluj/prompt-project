@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Layout } from "../layout/Layout"
 import { useAuth } from "../context/AuthContext"
@@ -27,7 +27,8 @@ export const Register = () => {
     setLoading(true)
     try {
       // 1. Registrar usuario
-      await registerApi(email, password)
+      const resRegister = await registerApi(email, password)
+      console.log(resRegister)
 
       // 2. Login automático tras registro
       const data = await loginApi(email, password) // { token }
@@ -41,6 +42,7 @@ export const Register = () => {
       setLoading(false)
     }
   }
+
 
   return (
     <Layout>

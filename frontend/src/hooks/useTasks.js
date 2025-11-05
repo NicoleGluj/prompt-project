@@ -5,8 +5,6 @@ import {
   removeTaskApi,
   toggleTaskApi,
 } from "../services/apiTasks"
-import React from "react";
-
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState([])

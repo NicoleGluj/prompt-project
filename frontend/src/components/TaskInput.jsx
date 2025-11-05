@@ -1,6 +1,4 @@
 import { useRef, useState } from "react"
-import React from "react";
-
 
 export const TaskInput = ({ onAdd }) => {
   const [listening, setListening] = useState(false)

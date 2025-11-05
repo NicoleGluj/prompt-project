@@ -8,7 +8,7 @@ export const registerApi = async (email, password) => {
     body: JSON.stringify({ email, password }),
   })
   if (!res.ok) throw new Error("Error en el registro")
-  return await res.text() // el backend devuelve un string ("Usuario registrado...")
+  return await res.text()
 }
 
 // 🔑 Login de usuario
@@ -19,5 +19,5 @@ export const loginApi = async (email, password) => {
     body: JSON.stringify({ email, password }),
   })
   if (!res.ok) throw new Error("Credenciales inválidas")
-  return await res.json() // backend devuelve { token }
+  return await res.json()
 }
