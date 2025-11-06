@@ -51,14 +51,13 @@ export const TaskInput = ({ onAdd }) => {
   }
 
   return (
-    <section className="mt-4 flex justify-center">
-      <div className="flex w-full max-w-2xl bg-white/90 rounded-2xl p-2 items-center">
+    <section className="mt-4 flex justify-center px-2 xs:px-0">
+      <div className="flex w-full xs:max-w-full sm:max-w-2xl bg-white/90 rounded-2xl p-2 items-center">
         <button
           onClick={handleToggle}
-          className={`flex items-center px-4 py-2 rounded-2xl text-[#FAA24B] font-semibold  gap-2 ${listening ? "" : "text-[#FAA24B] hover:text-[#e97b0e]"
-            }`}
+          className={`flex items-center px-3 xs:px-2 py-2 rounded-2xl text-[#FAA24B] font-semibold gap-2 ${listening ? "" : "hover:text-[#e97b0e]"} text-sm xs:text-xs`}
         >
-          <MicrophoneIcon className="w-7 h-7" />
+          <MicrophoneIcon className="w-6 h-6 xs:w-5 xs:h-5" />
           {listening ? "Detener" : ""}
         </button>
 
@@ -70,17 +69,16 @@ export const TaskInput = ({ onAdd }) => {
             setTranscript(capitalized)
           }}
           rows="1"
-          className="flex-1 p-2 text-gray-800 mr-4 "
+          className="flex-1 p-2 text-gray-800 mr-4 text-sm xs:text-xs"
           placeholder="Escribe tu tarea..."
         />
         <button
           onClick={handleConfirm}
-          className="px-4 py-2 bg-[#0e77c294] hover:bg-[#0e77c2c5] text-white rounded-2xl font-medium"
+          className="px-3 xs:px-2 py-2 bg-[#0e77c294] hover:bg-[#0e77c2c5] text-white rounded-2xl font-medium"
         >
-          <ArrowLongRightIcon className="w-6 h-6" />
+          <ArrowLongRightIcon className="w-5 h-5 xs:w-4 xs:h-4" />
         </button>
       </div>
     </section>
-
   )
 }

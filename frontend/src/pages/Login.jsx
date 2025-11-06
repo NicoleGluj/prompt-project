@@ -93,16 +93,17 @@ export const Login = () => {
               placeholder="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full py-2 px-3 rounded-2xl bg-white/60 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0E77C2] mb-10"
+              className="w-full py-2 px-3 rounded-2xl bg-white/60 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0E77C2] mb-8"
               required
             />
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-2 uppercase font-bold bg-[#fc7f49] hover:bg-[#fd6d2f] text-white rounded-2xl"
-            >
-              {loading ? "Ingresando..." : "Entrar"}
-            </button>
+              class="group relative inline-flex py-2 w-full font-medium items-center justify-center overflow-hidden rounded-2xl bg-[#eb831be7] text-white uppercase border-2 border-white/70">
+              <span>
+                {loading ? "Ingresando..." : "Entrar"}
+              </span>
+              <div class="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1500 group-hover:[transform:skew(-12deg)_translateX(100%)]"><div class="relative h-full w-8 bg-white/20"></div></div></button>
             <p className="mt-2 text-center font-medium text-white/90 text-sm">
               ¿No tienes una cuenta? <Link to="/register" className="font-bold"> Registrate </Link>
             </p>

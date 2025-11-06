@@ -15,11 +15,11 @@ export const MisTareas = () => {
       <Helmet>
         <title>Mis tareas</title>
       </Helmet>
-      <div className="m-4 ">
-        <h1 className="text-5xl font-medium text-white uppercase text-center mt-8">
+      <div className="m-4 sm:m-4 xs:m-2">
+        <h1 className="text-5xl sm:text-5xl xs:text-3xl font-medium text-white uppercase text-center mt-8">
           ¡Hola {user?.name || "de nuevo"}!
         </h1>
-        <h2 className="text-center text-3xl text-white mt-3 font-light mb-8">
+        <h2 className="text-center text-3xl sm:text-3xl xs:text-xl text-white mt-3 font-light mb-8">
           ¿Querés agregar un nuevo pendiente?
         </h2>
         <TaskInput onAdd={addTask} />

@@ -94,11 +94,11 @@ export const Register = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-2 uppercase font-bold bg-[#fc7f49] hover:bg-[#fd6d2f] text-white rounded-2xl"
-            >
-              {loading ? "Creando cuenta..." : "Registrarse"}
-            </button>
-
+              class="group relative inline-flex py-2 w-full font-medium items-center justify-center overflow-hidden rounded-2xl bg-[#eb831be7] text-white uppercase border-2 border-white/70">
+              <span>
+                {loading ? "Creando cuenta..." : "Registrarse"}
+              </span>
+              <div class="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1500 group-hover:[transform:skew(-12deg)_translateX(100%)]"><div class="relative h-full w-8 bg-white/20"></div></div></button>
             <p className="mt-2 text-center font-medium text-white/90 text-sm">
               ¿Ya tienes una cuenta? <Link to="/login" className="font-bold"> Iniciar sesion </Link>
             </p>
