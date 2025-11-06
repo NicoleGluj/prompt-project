@@ -22,10 +22,10 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   const login = (data) => {
-    setUser({ email: data.email })
+    setUser({ name: data.name, email: data.email })
     setToken(data.token)
     localStorage.setItem("authToken", data.token)
-    localStorage.setItem("authUser", JSON.stringify({ email: data.email }))
+    localStorage.setItem("authUser", JSON.stringify({ name: data.name, email: data.email }))
   }
 
   const logout = () => {

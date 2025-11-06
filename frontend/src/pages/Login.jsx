@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Layout } from "../layout/Layout"
 import { useAuth } from "../context/AuthContext"
 import { Helmet } from "react-helmet";
@@ -24,8 +24,8 @@ export const Login = () => {
 
     try {
       const data = await loginApi(email, password) // { token }
-      login({ email, token: data.token })          // guardar en contexto
-      navigate("/")
+      login({ name: data.name, email, token: data.token })// guardar en contexto
+      navigate("/mistareas")
     } catch (err) {
       setError(err.message)
     } finally {
@@ -67,18 +67,25 @@ export const Login = () => {
         />
         <meta name="twitter:image" content="https://tusitio.com/preview-login.png" />
       </Helmet>
+
       <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
-          <h1 className="text-2xl font-bold mb-4 text-center text-[#FF4583]">
-            Login
-          </h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="h-full w-full bg-gray-100/20 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-80 border-3 border-white/80 max-w-sm p-8 rounded-2xl shadow-lg">
+          <div>
+            <h1 className="text-2xl uppercase font-semibold text-center text-white">
+              Iniciar sesion
+            </h1>
+            <p className="mb-6 text-center text-white/80 mt-2 text-sm">
+              Bienvenido de nuevo! Ingresa tus datos para continuar:
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} >
             <input
               type="email"
               placeholder="Correo electrónico"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 rounded border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#933FED]"
+              className="w-full py-2 px-3 rounded-2xl bg-white/60 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0E77C2] mb-6 mt-3"
               required
             />
             <input
@@ -86,23 +93,26 @@ export const Login = () => {
               placeholder="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 rounded border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#933FED]"
+              className="w-full py-2 px-3 rounded-2xl bg-white/60 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0E77C2] mb-10"
               required
             />
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-2 bg-[#FF8A59] hover:bg-[#fd6d2f] text-white rounded-lg font-medium"
+              className="w-full px-4 py-2 uppercase font-bold bg-[#fc7f49] hover:bg-[#fd6d2f] text-white rounded-2xl"
             >
               {loading ? "Ingresando..." : "Entrar"}
             </button>
+            <p className="mt-2 text-center font-medium text-white/90 text-sm">
+              ¿No tienes una cuenta? <Link to="/register" className="font-bold"> Registrate </Link>
+            </p>
           </form>
 
           {error && (
-            <p className="mt-4 text-[#FF4583] font-semibold text-center">{error}</p>
+            <p className="mt-4 text-[#e74d0b] font-semibold text-center">{error}</p>
           )}
           {success && (
-            <p className="mt-4 text-[#FF4583] font-semibold text-center">
+            <p className="mt-4 text-[#97d81f] font-semibold text-center">
               Acceso concedido. Redirigiendo...
             </p>
           )}

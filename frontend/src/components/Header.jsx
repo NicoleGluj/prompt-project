@@ -2,30 +2,31 @@ import { MicrophoneIcon } from "@heroicons/react/16/solid";
 import { Link } from "react-router-dom";
 
 export const Header = () => (
-  <header className="bg-[#FF4583] text-white p-4 flex justify-between items-center shadow-md">
-    <div className="flex items-center gap-2">
+  <header className="m-4 p-2 flex justify-between items-center z-10 border-b-1 border-white/40">
+    <div className="flex items-center gap-2 text-white ">
       <MicrophoneIcon className="w-6 h-6" />
-      <h1 className="text-xl font-semibold tracking-wider">SayDo</h1>
+      <h1 className="text-lg uppercase tracking-wider font-[Alexandria]!"><Link to="/">VoiceTasks
+      </Link></h1>
     </div>
-    <nav className="flex gap-4 font-semibold">
+    <nav className="flex items-center gap-7 font-semibold text-white">
       <Link
         to="/login"
-        className="transition-transform duration-200 transform hover:scale-105"
+        className="transition-transform duration-200 transform hover:scale-105 uppercase"
       >
-        Login
+        Ingresar
       </Link>
       <Link
         to="/register"
-        className="transition-transform duration-200 transform hover:scale-105"
+        className="border-2 px-5 rounded-2xl flex items-center  transition-transform duration-200 transform hover:scale-105 uppercase"
       >
-        Registro
+        Registrar
       </Link>
-      <Link
+      {/* <Link
         to="/"
         className="transition-transform duration-200 transform hover:scale-105"
       >
         Mis Tareas
-      </Link>
+      </Link> */}
     </nav>
-  </header>
+  </header >
 )

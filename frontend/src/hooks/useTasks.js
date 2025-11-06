@@ -36,7 +36,7 @@ export const useTasks = () => {
   const removeTask = async (id) => {
     try {
       await removeTaskApi(id)
-      setTasks(prevTasks => prevTasks.filter(task => task.id !== id))
+      setTasks(prevTasks => prevTasks.filter(task => task._id !== id))
     } catch (error) {
       console.error("Error en removeTask:", error)
     }
@@ -45,10 +45,13 @@ export const useTasks = () => {
   // 🔄 Alternar estado de completado
   const toggleTask = async (id) => {
     try {
-      const task = tasks.find(t => t.id === id)
+      // Buscar usando _id
+      const task = tasks.find(t => t._id === id)
       if (!task) return
+
       const updatedTask = await toggleTaskApi(id, !task.completed)
-      setTasks(prevTasks => prevTasks.map(t => t.id === id ? updatedTask : t))
+
+      setTasks(prevTasks => prevTasks.map(t => t._id === id ? updatedTask : t))
     } catch (error) {
       console.error("Error en toggleTask:", error)
     }

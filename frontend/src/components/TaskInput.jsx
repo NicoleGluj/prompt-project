@@ -1,3 +1,4 @@
+import { ArrowLongRightIcon, MicrophoneIcon } from "@heroicons/react/16/solid"
 import { useRef, useState } from "react"
 
 export const TaskInput = ({ onAdd }) => {
@@ -50,36 +51,36 @@ export const TaskInput = ({ onAdd }) => {
   }
 
   return (
-    <div className="mt-4">
-      <button
-        onClick={handleToggle}
-        className={`px-4 py-2 rounded text-white font-medium shadow-md ${listening ? "bg-[#fac042] hover:bg-[#ffb10a]" : "bg-[#fc5b91] hover:bg-[#f8286e]"
-          }`}
-      >
-        {listening ? "Detener" : "Comenzar grabación"}
-      </button>
-      {transcript && !listening && (
-        <div className="mt-4">
-          <textarea
-            value={transcript}
-            onChange={(e) => {
-              const value = e.target.value
-              const capitalized = value.charAt(0).toUpperCase() + value.slice(1)
-              setTranscript(capitalized)
-            }}
-            rows="3"
-            cols="40"
-            className="w-full p-2 rounded border border-gray-300 text-gray-800 shadow-sm"
-          />
-          <br />
-          <button
-            onClick={handleConfirm}
-            className="mt-2 px-4 py-2 bg-[#FF8A59] hover:bg-[#ff793f] text-white rounded-lg font-medium"
-          >
-            Confirmar tarea
-          </button>
-        </div>
-      )}
-    </div>
+    <section className="mt-4 flex justify-center">
+      <div className="flex w-full max-w-2xl bg-white/90 rounded-2xl p-2 items-center">
+        <button
+          onClick={handleToggle}
+          className={`flex items-center px-4 py-2 rounded-2xl text-[#FAA24B] font-semibold  gap-2 ${listening ? "" : "text-[#FAA24B] hover:text-[#e97b0e]"
+            }`}
+        >
+          <MicrophoneIcon className="w-7 h-7" />
+          {listening ? "Detener" : ""}
+        </button>
+
+        <textarea
+          value={transcript}
+          onChange={(e) => {
+            const value = e.target.value
+            const capitalized = value.charAt(0).toUpperCase() + value.slice(1)
+            setTranscript(capitalized)
+          }}
+          rows="1"
+          className="flex-1 p-2 text-gray-800 mr-4 "
+          placeholder="Escribe tu tarea..."
+        />
+        <button
+          onClick={handleConfirm}
+          className="px-4 py-2 bg-[#0e77c294] hover:bg-[#0e77c2c5] text-white rounded-2xl font-medium"
+        >
+          <ArrowLongRightIcon className="w-6 h-6" />
+        </button>
+      </div>
+    </section>
+
   )
 }
